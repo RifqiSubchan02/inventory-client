@@ -1,18 +1,36 @@
-import { LockOutlined, UserOutlined } from '@ant-design/icons'
-import { Button, Checkbox, Form, Input, Typography } from 'antd'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
+import { Button, Checkbox, Form, Input, Typography } from 'antd'
+import { LockOutlined, UserOutlined } from '@ant-design/icons'
+import { useMutation } from '@tanstack/react-query'
+
+import { login } from '@/services/modules/auth'
+import { saveToStorage } from '@/utils/storage'
 
 const { Title } = Typography
 
+interface LoginForm {
+  email: string
+  password: string
+  remember: boolean
+}
+
 export default function Login() {
   const router = useRouter()
-  function onFinish(values: any) {
-    console.log('Received values of form: ', values)
+
+  const { mutate } = useMutation({
+    mutationFn: login,
+    onSuccess: data => {
+      saveToStorage('accessToken', data.data.accessToken)
+      saveToStorage('role', data.data.role)
+      router.push('/')
+    },
+  })
+
+  function onFinish({ email, password, remember }: LoginForm) {
+    mutate({ email, password })
   }
-  function onCancel() {
-    router.push('/')
-  }
+
   return (
     <>
       <Head>
@@ -28,14 +46,12 @@ export default function Login() {
             onFinish={onFinish}
           >
             <Form.Item
-              name="username"
-              rules={[
-                { required: true, message: 'Please input your Username!' },
-              ]}
+              name="email"
+              rules={[{ required: true, message: 'Please input your Email!' }]}
             >
               <Input
                 prefix={<UserOutlined className="site-form-item-icon" />}
-                placeholder="Username"
+                placeholder="Email"
               />
             </Form.Item>
             <Form.Item
@@ -64,7 +80,6 @@ export default function Login() {
               >
                 Log in
               </Button>
-              <Button onClick={onCancel}>Cancel</Button>
             </Form.Item>
           </Form>
         </div>

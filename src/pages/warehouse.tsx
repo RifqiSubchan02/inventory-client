@@ -1,9 +1,16 @@
 import type { ReactElement } from 'react'
-import type { NextPageWithLayout } from './_app'
+import Head from 'next/head'
 import { MainLayout } from '@/components'
 
 export default function Dashboard() {
-  return <div>Dashboard</div>
+  return (
+    <>
+      <Head>
+        <title>Warehouse</title>
+      </Head>
+      <div>Warehouse</div>
+    </>
+  )
 }
 
 Dashboard.getLayout = function getLayout(page: ReactElement) {

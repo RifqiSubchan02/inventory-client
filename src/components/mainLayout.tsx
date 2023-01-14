@@ -1,17 +1,22 @@
-import { createElement, ReactNode, useState, Fragment } from 'react'
+import type { ReactNode } from 'react'
+import type { MenuProps } from 'antd'
+
+import { createElement, useState, Fragment } from 'react'
 import { useRouter } from 'next/router'
 import Image from 'next/image'
 import Link from 'next/link'
-import { Layout, Menu, theme, MenuProps, Space } from 'antd'
+import { Layout, Menu, theme, Space } from 'antd'
 import {
-  DesktopOutlined,
   FileOutlined,
   MenuFoldOutlined,
   MenuUnfoldOutlined,
   PieChartOutlined,
   TeamOutlined,
   UserOutlined,
+  HomeOutlined,
 } from '@ant-design/icons'
+
+import { AvatarDropdown } from '@/components'
 
 const { Header, Content, Footer, Sider } = Layout
 
@@ -33,12 +38,8 @@ function getItem(
 
 const items: MenuItem[] = [
   getItem('Dashboard', '/', <PieChartOutlined />),
-  getItem('Option 2', '/dashboard', <DesktopOutlined />),
-  getItem('User', 'sub1', <UserOutlined />, [
-    getItem('Tom', '3'),
-    getItem('Bill', '4'),
-    getItem('Alex', '5'),
-  ]),
+  getItem('Warehouse', '/warehouse', <HomeOutlined />),
+  getItem('User', '/user', <UserOutlined />),
   getItem('Team', 'sub2', <TeamOutlined />, [
     getItem('Team 1', '6'),
     getItem('Team 2', '8'),
@@ -63,11 +64,11 @@ export default function MainLayout({ children }: { children?: ReactNode }) {
         collapsible
         collapsed={collapsed}
         onCollapse={value => setCollapsed(value)}
-        className="h-screen overflow-auto !fixed inset-y-0 left-0 !duration-300"
+        className="h-screen overflow-auto !fixed inset-y-0 left-0 duration-300"
       >
         <div className="sticky top-0 p-4 z-10 bg-[#001529]">
           <div className="flex h-8 items-center">
-            <Link href={'/'}>
+            <Link href="/">
               <Space>
                 <Image
                   src="/images/logo.png"
@@ -83,6 +84,7 @@ export default function MainLayout({ children }: { children?: ReactNode }) {
           </div>
         </div>
         <Menu
+          rootClassName=""
           theme="dark"
           mode="inline"
           defaultOpenKeys={['/' + root]}
@@ -97,31 +99,31 @@ export default function MainLayout({ children }: { children?: ReactNode }) {
         }`}
       >
         <Header
-          className="sticky top-0 !p-0"
+          className="sticky flex top-0 !p-0 !p-4 justify-between drop-shadow"
           style={{ background: colorBgContainer }}
         >
           {createElement(collapsed ? MenuUnfoldOutlined : MenuFoldOutlined, {
-            className: 'text-lg px-5',
+            className: 'text-lg self-center',
             onClick: () => setCollapsed(!collapsed),
           })}
+          <AvatarDropdown />
         </Header>
 
-        <Content className="mt-6 mx-4 mb-0">
-          <div className="p-6 h-full" style={{ background: colorBgContainer }}>
-            {children}
-            {/* <p>long content</p>
-            {
-              // indicates very long content
-              Array.from({ length: 100 }, (_, index) => (
-                <Fragment key={index}>
-                  {index % 20 === 0 && index ? 'more' : '...'}
-                  <br />
-                </Fragment>
-              ))
-            } */}
-          </div>
+        <Content className="my-6 mx-4">
+          {children}
+          {/* <p>long content</p>
+          {
+            // indicates very long content
+            Array.from({ length: 100 }, (_, index) => (
+              <Fragment key={index}>
+                {index % 20 === 0 && index ? 'more' : '...'}
+                <br />
+              </Fragment>
+            ))
+          }
+          <p>end</p> */}
         </Content>
-        <Footer className="text-center">
+        <Footer className="text-center border border-gray-300 !bg-white !p-3 drop-shadow">
           Ant Design ©2018 Created by Ant UED
         </Footer>
       </Layout>
